@@ -17,7 +17,7 @@ module.exports = {
     extensions: [".js", ".ts"]
   },
   output: {
-    path: path.resolve("doc")
+    path: path.resolve("docs")
   },
   plugins: [
     new HtmlWebpackPlugin({
