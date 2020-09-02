@@ -46,3 +46,8 @@ connect("fata-array", function(el) {
 
   (el as HTMLTextAreaElement).value = JSON.stringify(value, null, 2);
 });
+
+// datetime
+connect("fata-datetime", function(el) {
+  (el as HTMLInputElement).value = fata.datetime();
+});

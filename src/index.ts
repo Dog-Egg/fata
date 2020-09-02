@@ -51,3 +51,44 @@ export function array<T>(
     .fill(null)
     .map(() => func());
 }
+
+export function datetime({
+  format = "%Y-%m-%d %H:%M:%S"
+}: { format?: string } = {}) {
+  const directives = ["%%", "%Y", "%m", "%d", "%H", "%M", "%S"];
+  const re = RegExp(directives.concat(".+?").join("|"), "g");
+  const splits = format.match(re) as Array<string>;
+
+  const offset = 100 * 365 * 24 * 60 * 60 * 1000;
+  const value = Date.now() + integer({ min: -offset, max: offset });
+  const date = new Date(value);
+
+  for (let i = 0; i < splits.length; i++) {
+    let item = splits[i];
+    switch (item) {
+      case "%%":
+        item = "%";
+        break;
+      case "%Y":
+        item = String(date.getFullYear());
+        break;
+      case "%m":
+        item = String(date.getMonth() + 1).padStart(2, "0");
+        break;
+      case "%d":
+        item = String(date.getUTCDate()).padStart(2, "0");
+        break;
+      case "%H":
+        item = String(date.getHours()).padStart(2, "0");
+        break;
+      case "%M":
+        item = String(date.getMinutes()).padStart(2, "0");
+        break;
+      case "%S":
+        item = String(date.getSeconds()).padStart(2, "0");
+        break;
+    }
+    splits.splice(i, 1, item);
+  }
+  return splits.join("");
+}
