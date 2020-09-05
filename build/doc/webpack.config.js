@@ -4,9 +4,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
   mode: process.env.NODE_ENV,
-  entry: {
-    doc: "./docsrc"
-  },
+  entry: "./docsrc",
   module: {
     rules: [
       { test: /\.ts$/, loader: "ts-loader", exclude: /node_modules/ },
@@ -17,11 +15,13 @@ module.exports = {
     extensions: [".js", ".ts"]
   },
   output: {
-    path: path.resolve("docs")
+    path: path.resolve("docs"),
+    filename: "[name].[chunkhash:5].js"
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve("docsrc/index.html")
+      template: path.resolve("docsrc/index.html"),
+      minify: { collapseWhitespace: true, removeComments: true }
     }),
     new CleanWebpackPlugin()
   ]

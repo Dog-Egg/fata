@@ -1,31 +1,19 @@
-body {
-  margin: 30px 60px;
-}
-
 input {
-  width: 300px;
+  width: 500px;
 }
 
 textarea {
-  width: 300px;
+  width: 500px;
   height: 200px;
 }
 
 img {
-  max-width: 300px;
+  max-width: 500px;
   max-height: 300px;
 }
 
-button {
-  cursor: pointer;
-}
-
-table {
-  border-spacing: 10px 20px;
-}
-
-table button {
-  float: right;
+tr > td:first-child {
+  text-align: right;
 }
 
 td {
