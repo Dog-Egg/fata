@@ -49,3 +49,14 @@ bind("fata-array", function(el) {
 bind("fata-datetime", function(el) {
   el.value = fata.datetime();
 });
+
+// choice
+bind("fata-choice", function(el) {
+  el.value = fata.choice(["a", "b", "c", "d", "e", "f", "g"]);
+});
+
+// choices
+bind("fata-choices", function(el) {
+  const value = fata.choices(["a", "b", "c", "d", "e", "f", "g"]);
+  el.value = JSON.stringify(value);
+});

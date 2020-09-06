@@ -92,3 +92,17 @@ export function datetime({
   }
   return splits.join("");
 }
+
+export function choice<T>(arr: Array<T>) {
+  const index = integer({ min: 0, max: arr.length - 1 });
+  return arr[index];
+}
+
+export function choices<T>(arr: Array<T>, options: { length?: number } = {}) {
+  const { length = integer({ min: 1, max: arr.length }) } = options;
+  const result = [];
+  for (let i = 0; i < length; i++) {
+    result.push(choice(arr));
+  }
+  return result;
+}
