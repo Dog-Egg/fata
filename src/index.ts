@@ -9,7 +9,7 @@ export function integer({
   min = Number.MIN_VALUE,
   max = Number.MAX_VALUE
 } = {}): number {
-  return Math.round(float({ min, max }));
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 export function boolean() {
