@@ -1,3 +1,7 @@
+import names from "./locale/zh-cn/name";
+import sentences from "./locale/zh-cn/sentence";
+import addresses from "./locale/zh-cn/address";
+
 export function float({
   min = Number.MIN_VALUE,
   max = Number.MAX_VALUE
@@ -98,11 +102,56 @@ export function choice<T>(arr: Array<T>) {
   return arr[index];
 }
 
-export function choices<T>(arr: Array<T>, options: { length?: number } = {}) {
-  const { length = integer({ min: 1, max: arr.length }) } = options;
-  const result = [];
-  for (let i = 0; i < length; i++) {
+export function choices<T>(
+  arr: Array<T>,
+  options: { min?: number; max?: number } = {}
+) {
+  const { min = 1, max = arr.length } = options;
+  const result = [],
+    count = integer({ min, max });
+  for (let i = 0; i < count; i++) {
     result.push(choice(arr));
   }
   return result;
+}
+
+export function name(): string {
+  return choice(names);
+}
+
+export function sentence(): string {
+  return choice(sentences);
+}
+
+export function address(options: { format?: string } = {}): string {
+  const { format = "%C%d" } = options;
+
+  const splits = format.match(/%%|%C|%c|%d|.+?/g);
+  if (!splits) {
+    return "";
+  }
+
+  const values: Array<string> = [];
+  const item = choice(addresses);
+  splits.forEach(function(s) {
+    let value;
+    switch (s) {
+      case "%%":
+        value = "%";
+        break;
+      case "%C":
+        value = item.city + item.citySuffix;
+        break;
+      case "%c":
+        value = item.city;
+        break;
+      case "%d":
+        value = item.detail;
+        break;
+      default:
+        value = s;
+    }
+    values.push(value);
+  });
+  return values.join("");
 }

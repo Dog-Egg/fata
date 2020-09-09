@@ -60,3 +60,18 @@ bind("fata-choices", function(el) {
   const value = fata.choices(["a", "b", "c", "d", "e", "f", "g"]);
   el.value = JSON.stringify(value);
 });
+
+// name
+bind("fata-name", function(el) {
+  el.value = fata.name();
+});
+
+// sentence
+bind("fata-sentence", function(el) {
+  el.value = fata.sentence();
+});
+
+// address
+bind("fata-address", function(el) {
+  el.value = fata.address();
+});
