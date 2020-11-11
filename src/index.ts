@@ -56,45 +56,50 @@ export function array<T>(
     .map(() => func());
 }
 
+function formatting(
+  format: string,
+  prefix: string,
+  replaceMap: { [k: string]: string }
+) {
+  const map: { [k: string]: string } = {
+    [prefix + prefix]: prefix
+  };
+  Object.entries(replaceMap).forEach(([k, v]) => {
+    map[prefix + k] = v;
+  });
+
+  const pattern = Object.keys(map)
+    .concat(".+?")
+    .join("|");
+  const re = RegExp(pattern, "g");
+  const splits = format.match(re) as string[];
+
+  const result: string[] = [];
+  splits.forEach(item => {
+    if (item in map) {
+      result.push(map[item]);
+    } else {
+      result.push(item);
+    }
+  });
+  return result.join("");
+}
+
 export function datetime({
   format = "%Y-%m-%d %H:%M:%S"
 }: { format?: string } = {}) {
-  const directives = ["%%", "%Y", "%m", "%d", "%H", "%M", "%S"];
-  const re = RegExp(directives.concat(".+?").join("|"), "g");
-  const splits = format.match(re) as Array<string>;
-
   const offset = 100 * 365 * 24 * 60 * 60 * 1000;
   const value = Date.now() + integer({ min: -offset, max: offset });
   const date = new Date(value);
 
-  for (let i = 0; i < splits.length; i++) {
-    let item = splits[i];
-    switch (item) {
-      case "%%":
-        item = "%";
-        break;
-      case "%Y":
-        item = String(date.getFullYear());
-        break;
-      case "%m":
-        item = String(date.getMonth() + 1).padStart(2, "0");
-        break;
-      case "%d":
-        item = String(date.getUTCDate()).padStart(2, "0");
-        break;
-      case "%H":
-        item = String(date.getHours()).padStart(2, "0");
-        break;
-      case "%M":
-        item = String(date.getMinutes()).padStart(2, "0");
-        break;
-      case "%S":
-        item = String(date.getSeconds()).padStart(2, "0");
-        break;
-    }
-    splits.splice(i, 1, item);
-  }
-  return splits.join("");
+  return formatting(format, "%", {
+    Y: String(date.getFullYear()),
+    m: String(date.getMonth() + 1).padStart(2, "0"),
+    d: String(date.getUTCDate()).padStart(2, "0"),
+    H: String(date.getHours()).padStart(2, "0"),
+    M: String(date.getMinutes()).padStart(2, "0"),
+    S: String(date.getSeconds()).padStart(2, "0")
+  });
 }
 
 export function choice<T>(arr: Array<T>) {
@@ -123,35 +128,11 @@ export function sentence(): string {
   return choice(sentences);
 }
 
-export function address(options: { format?: string } = {}): string {
-  const { format = "%C%d" } = options;
-
-  const splits = format.match(/%%|%C|%c|%d|.+?/g);
-  if (!splits) {
-    return "";
-  }
-
-  const values: Array<string> = [];
-  const item = choice(addresses);
-  splits.forEach(function(s) {
-    let value;
-    switch (s) {
-      case "%%":
-        value = "%";
-        break;
-      case "%C":
-        value = item.city + item.citySuffix;
-        break;
-      case "%c":
-        value = item.city;
-        break;
-      case "%d":
-        value = item.detail;
-        break;
-      default:
-        value = s;
-    }
-    values.push(value);
+export function address({ format = "%C%d" }: { format?: string } = {}): string {
+  const obj = choice(addresses);
+  return formatting(format, "%", {
+    C: obj.city + obj.citySuffix,
+    c: obj.city,
+    d: obj.detail
   });
-  return values.join("");
 }
